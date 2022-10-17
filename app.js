@@ -34,16 +34,17 @@ function onClientConnection(sock){
         // Process data received from the client
         console.log(`>> data received : ${data} `);
         let inData = JSON.parse(data);
-        const id = inData.shift();
+        const dataId = inData.shift();
 		
 		// Prepare and send a response to the client 
         let serverResp = "";
-        switch (id){
+        switch (dataId){
             case (1):
                 // Request for which sensor node to read
                 let matches = {};
                 let count = 0;
                 for (const element of inData) {
+                    // Filter out matches as array index no, return the index & scan mode
                     if (Object.hasOwn(toRead, element)) {
                         matches[count] = toRead[element];
                     }
@@ -54,10 +55,7 @@ function onClientConnection(sock){
             case (2):
                 // Notification of which sensor node read sent
                 let idDone = inData.shift();
-                let scannedArray = inData.shift();
-                arrayDone = JSON.parse(scannedArray);
-                arrayDone.shift();
-                let deviceID = arrayDone[idDone];
+                let deviceID = inData[idDone];
                 console.log(deviceID);
 
                 serverResp = "blank";
@@ -66,7 +64,7 @@ function onClientConnection(sock){
             default:
                 // Sensor node incoming data
                 serverResp = "blank";
-                storeSensorData(id, inData);
+                storeSensorData(dataId, inData);
         }
 		
 		// Send resonpse to client & Close the connection 
