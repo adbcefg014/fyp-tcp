@@ -62,7 +62,7 @@ function onClientConnection(sock){
                 nodeReadSent(deviceID);
                 break;
             default:
-                // Sensor node incoming data
+                // Sensor node incoming data, where dataId is sensor node name
                 serverResp = "blank";
                 storeSensorData(dataId, inData);
         }
@@ -85,10 +85,7 @@ function onClientConnection(sock){
 
 // Firestore data functions
 async function storeSensorData(id, inData){
-    let dataObj = {};
-    for (let arrayEntry = 0; arrayEntry < inData.length; arrayEntry++) {
-        dataObj[arrayEntry] = inData[arrayEntry];
-    }
+    let dataObj = {...inData};
 
     // Add processed set of sensor readings to Database
     let timestamp = new Date().toISOString();
